@@ -1,0 +1,43 @@
+
+quantitative measure of goodness
+
+    log prob on mnist test set 
+        measure log prob for each test set sample given a specific value of z
+        take the average over all log probs for a given z as well as over all samples from the test set
+        
+        for sklearn gmm:
+            score_p = model.score(X,y)
+            
+            loglikelihood = mean ( score_p, forall X in test set)
+            
+        alternative for torch.distributions
+            for a given sample x:
+                temp = 0
+                for each z:
+                    get mu_z and cov_z
+
+                    p = get multivariateNormal(mu_z, cov_z)
+
+                    temp += p.log_prob(x)
+                
+            average over all samples x in test set
+
+
+qualititive measure of goodness
+
+    sampling x conditioning on z
+        for each z
+            sample x~p(x|z) (could also sample multiple and take average)
+
+            reshape from 784-dim value to nice image (28x 28)
+
+            plot
+        
+        note:
+            a visual measure of the models correspondance with actual mnist data
+    
+
+
+
+    
+
