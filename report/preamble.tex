@@ -1,0 +1,213 @@
+%\documentclass[11pt,a4paper]{article}
+\documentclass{article}
+\usepackage{arxiv}
+
+%%%%%%% META STUFF %%%%%%%%%%%%%%%
+\usepackage{xifthen}
+\usepackage{xparse}
+\usepackage{lipsum}
+%%%%%%%%FONT%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{microtype}
+\usepackage{upgreek}
+%\usepackage{lmodern}
+%\usepackage[english]{babel}
+
+%%%%%%%LAYOUT%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{a4wide}
+\usepackage[hang]{footmisc}
+
+%\usepackage[nofoot, left=2.20cm, bottom=1.5cm, right=2.20cm, top=2.5cm]{geometry}
+\usepackage{parskip} % automatic line breaks
+\usepackage{enumitem}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{floatrow}
+\usepackage{array}
+\newcolumntype{|}{!{\vrule width 0.5pt}}
+\newfloatcommand{capbtabbox}{table}[][\FBwidth]
+\usepackage{booktabs}
+
+%%%%%GRAPHICS%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{float} % https://ctan.org/pkg/float
+\usepackage{graphicx}  % For including images
+\graphicspath{{../code/figures/}}
+% do not move figures across sections
+\usepackage[section]{placeins}
+
+%%%%%%%%% color %%%%%%%%%%%%%%%%%
+\usepackage{xcolor}
+\definecolor{mygray}{HTML}{F7F7F7}
+
+%%%%%%%%%%||bibliography||%%%%%%%%%%%%%
+\usepackage{natbib}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{doi}
+\nocite{*}
+%\usepackage[maxbibnames=4,backend=biber,style=alphabetic, autocite=footnote]{biblatex}
+%\usepackage{apacite} % https://ctan.org/pkg/apacite
+%\setlength\bibitemsep{0.4\baselineskip}
+%\DeclareFieldFormat{url}{URL\addcolon\space\url{#1}}
+%\DeclareFieldFormat{isbn}{ISBN\addcolon\space{#1}}
+%\DeclareFieldFormat{doi}{%
+%    DOI\addcolon\space
+%    \ifhyperref
+%    {\href{https://doi.org/#1}{\nolinkurl{#1}}}
+%    {\nolinkurl{#1}}%
+%}
+
+%%%%%%MATH%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{amsfonts}
+%\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{dsfont}
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{bm}
+\usepackage{siunitx}
+
+%\usepackage{mathpazo}
+%\allowdisplaybreaks
+
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+% Left-right bracket
+\newcommand{\lr}[1]{\left (#1\right)}
+% Left-right square bracket
+\newcommand{\lrs}[1]{\left [#1 \right]}
+% Left-right curly bracket
+\newcommand{\lrc}[1]{\left \{#1\right\}}
+% Left-right absolute value
+\newcommand{\lra}[1]{\left |#1\right|}
+% Left-right upper value
+\newcommand{\lru}[1]{\left \lceil#1\right\rceil}
+% Scalar product
+\newcommand{\vp}[2]{\left \langle #1 , #2 \right \rangle}
+% The real numbers
+\newcommand{\R}{\mathbb R}
+% The natural numbers
+\newcommand{\N}{\mathbb N}
+% Expectation symbol with an optional argument
+\NewDocumentCommand{\E}{o}{\mathbb E\IfValueT{#1}{\lrs{#1}}}
+% Indicator function with an optional argument
+\NewDocumentCommand{\1}{o}{\mathds 1{\IfValueT{#1}{\lr{#1}}}}
+% Probability function
+\let\P\undefined
+\NewDocumentCommand{\P}{o}{\mathbb P{\IfValueT{#1}{\lr{#1}}}}
+% A hypothesis space
+\newcommand{\HH}{\mathcal H}
+% A sample space
+\newcommand{\XX}{\mathcal{X}}
+% A label space
+\newcommand{\YY}{\mathcal{Y}}
+% A nicer emptyset symbol
+\newcommand{\FF}{\mathcal{F}}
+\let\emptyset\varnothing
+% Sign operator
+\DeclareMathOperator{\sign}{sign}
+\newcommand{\sgn}[1]{\sign\lr{#1}}
+% KL operator
+\DeclareMathOperator{\KL}{KL}
+% kl operator
+\DeclareMathOperator{\kl}{kl}
+% The entropy
+\let\H\relax
+\DeclareMathOperator{\H}{H}
+% Majority vote
+\DeclareMathOperator{\MV}{MV}
+% Variance
+\DeclareMathOperator{\V}{Var}
+\NewDocumentCommand{\Var}{o}{\V\IfValueT{#1}{\lrs{#1}}}
+% VC
+\DeclareMathOperator{\VC}{VC}
+% VC-dimension
+\newcommand{\dVC}{d_{\VC}}
+% FAT ...
+\DeclareMathOperator{\FAT}{FAT}
+\newcommand{\dfat}{d_{\FAT}}
+\newcommand{\lfat}{\ell_{\FAT}}
+\newcommand{\Lfat}{L_{\FAT}}
+\newcommand{\hatLfat}{\hat L_{\FAT}}
+% Distance
+\DeclareMathOperator{\dist}{dist}
+\newcommand{\x}{\bm{x}}
+\newcommand{\y}{\bm{y}}
+\newcommand{\w}{\bm{w}}
+\newcommand{\T}{\text{T}}
+\newcommand{\U}{\bm{U}}
+\newcommand{\bu}{\bm{u}}
+
+\def\vec#1{\mathchoice{\mbox{\boldmath$\displaystyle#1$}}
+    {\mbox{\boldmath$\textstyle#1$}}
+    {\mbox{\boldmath$\scriptstyle#1$}}
+    {\mbox{\boldmath$\scriptscriptstyle#1$}}}
+
+%%%%%%% Algorithms and theorems %%%%%%%%%%%%
+\usepackage[ruled, linesnumbered]{algorithm2e}
+\usepackage{amsthm}
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{lemma}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{corollary}
+\newtheorem{corollary}{Corollary}
+
+
+%%%%%%%%%||links||%%%%%%%%%%
+\usepackage{url}
+\urlstyle{rm}
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+%\hypersetup{
+%    colorlinks,
+%    linkcolor={red!50!black},
+%    citecolor={blue!50!black},
+%    urlcolor={blue!80!black}
+%}
+\usepackage[noabbrev, capitalise, nameinlink]{cleveref}
+\crefname{lstlisting}{listing}{listings}
+\Crefname{lstlisting}{Listing}{Listings}
+
+
+%%%%%%%CODE%%%%%%%
+%\usepackage[outputdir=doc]{minted}
+%\setminted{fontsize = \small, breaklines=true, bgcolor=mygray}
+%\AtBeginEnvironment{listing}{\setcounter{listing}{\value{lstlisting}}}
+%\AtEndEnvironment{listing}{\stepcounter{lstlisting}}
+%\newenvironment{code}{\captionsetup{type=listing}}{}
+%\AtBeginEnvironment{code}{\setcounter{listing}{\value{lstlisting}}}
+%\AtEndEnvironment{code}{\stepcounter{lstlisting}}
+%\renewcommand{\theFancyVerbLine}{\rmfamily {\footnotesize{\arabic{FancyVerbLine}}}}
+\usepackage{listings}  % For presenting code 
+% Sensible defaults for lstlistings
+\lstdefinestyle{mystyle}{
+language=Python,
+basicstyle=\ttfamily\footnotesize,
+backgroundcolor=\color[HTML]{F7F7F7},
+rulecolor=\color[HTML]{EEEEEE},
+identifierstyle=\color[HTML]{24292E},
+emphstyle=\color[HTML]{005CC5},
+keywordstyle=\color[HTML]{D73A49},
+commentstyle=\color[HTML]{6A737D},
+stringstyle=\color[HTML]{032F62},
+emph={@property,self,range,True,False},
+morekeywords={super,with,as,lambda},
+literate=%
+    {+}{{{\color[HTML]{D73A49}+}}}1
+{-}{{{\color[HTML]{D73A49}-}}}1
+{*}{{{\color[HTML]{D73A49}*}}}1
+{/}{{{\color[HTML]{D73A49}/}}}1
+{=}{{{\color[HTML]{D73A49}=}}}1
+{/=}{{{\color[HTML]{D73A49}=}}}1,
+breaklines=true,
+showstringspaces=false,
+frame=L,
+belowcaptionskip=1\baselineskip,
+xleftmargin=\parindent
+}
+\lstset{style=mystyle}
