@@ -41,6 +41,35 @@ pdfauthor={Christian D.~Troelsen, Jens Sørensen, Mathias Rasmussen}
 
 \begin{document}
 \maketitle
+\section{Density modeling}
+\subsection{Implement a convolutional VAE}
+\subsection{Alternative models}
+\subsubsection{PPCA}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width = 0.5\textwidth]{figures/ppca/clustering}
+	\caption{Clustering on MNIST test (projection to latent space) using the trained PPCA model}
+	\label{fig:ppca:clustering}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width = 0.5\textwidth]{figures/ppca/interpolation}
+	\caption{Interpolating images from latent space variables using the trained PPCA model}
+	\label{fig:ppca:interpolation}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width = 0.5\textwidth]{figures/ppca/mean_vs_real}
+	\caption{Comparison of MNIST test set images and corresponding mean parameters of the likelihood function in the trained PPCA model}
+	\label{fig:ppca:mean_v_real}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width = 0.5\textwidth]{figures/ppca/sample_vs_real}
+	\caption{Comparison of MNIST test set images and corresponding reconstructions sampled from the PPCA model}
+	\label{fig:ppca:mean_v_real}
+\end{figure}
+
 \footnote{A test}
 \citep{bishop2006pattern}
 \bibliographystyle{unsrtnat}
