@@ -1,3 +1,96 @@
+A.1    Implement a convolutional VAE
+
+    Briefly  describe  how  the  VAE  was  implemented,  and  how  parameters  were estimated
+
+        vae implementation 
+            describe how each linear layer in encoder was changed to a convolutional layer with stride 2 and padding 1 and halving of feature maps, and each linear layer in decoder was changed to a transposed convolutional layer also with stride 2 and halving of feature maps
+
+            describe the reparameterization trick
+
+            describe the choice of likelihood function == multivariate bernoulli == assuming mnist images are binary
+
+            define that the latent space is 2-d
+
+            perhaps shown the model definition in the report
+
+        parameter estimation
+            maximizing the elbo which is a lower bound on log likelihood of data
+                show general formula
+                explain specific formula for the given vae
+                    i.e. the approximation of the expected log likelihood using binary cross entropy and the closed form solution for the kl divergence under the assumpting that the posterior is gaussian and prior is gaussian
+            explain that we use gradient descent to optimize the elbo, in particular the Adam algorithm with a learning rate of 0.001 and batch size 128
+            also explain that we are training for 25 epochs
+            make it apparent that the basic vae is trained using the exactly same setup as the cvae so that they can be fairly compared
+
+    Describe the performance of the model compared to the original.  You can dothis visually, based on the quality of generated images, but try to also comeup with a way to do this quantitatively.
+
+            quantitative comparison 
+                remember to explain that test set statistics are averaged across the dataset examples (log likelihood elbo and mse)
+
+                explain how mse is computed for each model 
+
+
+            analyze the quantitative results:
+                both mse and elbo is lower for vae, though the difference is not that great
+                so this indicates that the vae has learned the dataset distribution to a better degree than the cvae
+
+            explain the qualitative measures/experiments
+                clustering
+                interpolation
+                reconstruction/mean parameter images
+
+            analyze the qualitative results
+                ref to images and extropolate
+                    clustering:
+                        both models seem to have been able to separate the different classes in latent space
+                    interpolation:
+                        seems to indicate that the vae model is better at separating the classes, i.e. it has learned a better representation
+                            we see that the interpolation for cvae seems to be less well defined, different digit shapes blend together, and do not have
+                            the same kind of well defined regions as with the vae
+                            or we could say that based on the interpolation the cvae only is able to generate a subset of digits, which are heavily 0,1 9 and perhaps 4
+                    
+                    reconstruction results:
+                        also indicates that the vae model is superior as its mean parameter images and corresponding images are somewhat more defined than those of the cvae
+                            in particular the 2
+                    
+
+A.2    Alternative models
+
+
+
+    Argue for your choice of models and describe essential properties and advan-tages/disadvantages of these models (e.g.  tractability of likelihood)
+        use notes below but also give a short definition of the model
+
+    For each model, assess whether the model is better or worse than the original VAE (preferrably both by visual inspection and by quantifying the goodnessof fit).
+        ppca
+            quantitative comparison 
+                explain how the log likelihood is computed -- show formula from bishop book
+                explain how the mse is computed
+            
+            analyze the quantative results
+                both log likelihood and mse are extremely low compared to vae model, this indicates that the model has not really learned much useful about the dataset at all
+
+            
+            qualitative experiments
+                clustering
+                    explain how we map from x to z
+                interpolation
+                    explain how we map from x to mean set images
+                reconstruction
+                    explain how we sample reconstructions based on mean images
+
+            analyze qualitative results
+                clustering
+                    seems to be more or less of a mess, were most points from diffent classes overlap, though the model does seem to separate 0s and 1s from the rest of the other types of digits, i.e. it has learned to distinguish these, or it has learned a proper representation of these
+                interpolation
+                    does not seem to cover many digits, but rather goes from somewhat of a mix of 0 and 2 to what looks like 9s and 1s, but these also seem to be not very distinct. in general these results corroborate the clustering and qualitative results
+                reconstructions
+                    the mean set images are not very distinct and it only seems like it has learned something somewhat useful about 0s and 1s, which is also what the other experiments indicate. in particular it cant really distinguish a 2 from a 0 and it cant really distinguish 7 and 4 from 9.
+
+
+
+
+
 elbo
     The ELBO is defined as the expectation of the log-likelihood of the data under the approximate posterior, minus the KL divergence between the approximate posterior and the true posterior.
 
