@@ -89,8 +89,6 @@ A.2    Alternative models
 
 
 
-
-
 elbo
     The ELBO is defined as the expectation of the log-likelihood of the data under the approximate posterior, minus the KL divergence between the approximate posterior and the true posterior.
 
@@ -182,6 +180,48 @@ ppca
         Due to the particular choice of output variance, there is a closed-form maximum likelihood solution to the W,μ,σ parameters. We can also use EM, which can be more efficient in higher dimensions.
 
         For both models, we should remember that the maximum likelihood only determines the latent space up to an arbitrary rotation.
+
+
+    We now show that PCA can also be expressed as the maximum likelihood
+solution of a probabilistic latent variable model. This reformulation of PCA, known
+as probabilistic peA, brings several advantages compared with conventional PCA:
+    • Probabilistic PCA represents a constrained form of the Gaussian distribution
+    in which the number of free parameters can be restricted while still allowing
+    the model to capture the dominant correlations in a data set.
+
+    • We can derive an EM algorithm for PCA that is computationally efficient in
+    situations where only a few leading eigenvectors are required and that avoids
+    having to evaluate the data covariance matrix as an intermediate step.
+    • The combination of a probabilistic model and EM allows us to deal with missing
+    values in the data set.
+    • Mixtures of probabilistic PCA models can be formulated in a principled way
+    and trained using the EM algorithm.
+    • Probabilistic PCA forms the basis for a Bayesian treatment of PCA in which
+    the dimensionality of the principal subspace can be found automatically from
+    the data.
+    • The existence of a likelihood function allows direct comparison with other
+    probabilistic density models. By contrast, conventional PCA will assign a low
+    reconstruction cost to data points that are close to the principal subspace even
+    if they lie arbitrarily far from the training data.
+    • Probabilistic PCA can be used to model class-conditional densities and hence
+    be applied to classification problems.
+    • The probabilistic PCA model can be run generatively to provide samples from
+    the distribution.
+    Finally, we note that an important role for the probabilistic PCA model is in
+    defining a multivariate Gaussian distribution in which the number of degrees of freedom,
+    in other words the number of independent parameters, can be controlled whilst
+    still allowing the model to capture the dominant correlations in the data. Recall
+    that a general Gaussian distribution has D(D + 1)/2 independent parameters in its
+    covariance matrix (plus another D parameters in its mean). Thus the number of
+    parameters scales quadratically with D and can become excessive in spaces of high
+    dimensionality. If we restrict the covariance matrix to be diagonal, then it has only D
+    independent parameters, and so the number of parameters now grows linearly with
+    dimensionality. However, it now treats the variables as if they were independent and
+    hence can no longer express any correlations between them. Probabilistic PeA provides
+    an elegant compromise in which the M most significant correlations can be
+    captured while still ensuring that the total number of parameters grows only linearly
+    with D.
+
 
     tractability
 
