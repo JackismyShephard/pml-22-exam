@@ -1,17 +1,282 @@
-gaussian mixture model
-    there exists a closed form solution for the likelihood given known parameters but it is a complex sum over log likelihood for each given latent variable z
-        for each datapoint we sum its log prob given a specific z : logL(X | theta) = sum_{i=1}^{n} log( sum_{j=1}^{k} pi_j * N(x_i | mu_j, Sigma_j) )
-            
-            Where pi_j, mu_j and Sigma_j are the weight, mean, and covariance matrix of the j-th component and N(x_i | mu_j, Sigma_j) is the probability density function of a multivariate normal distribution with mean mu_j and covariance matrix Sigma_j evaluated at x_i.
+A.1    Implement a convolutional VAE
 
-            we can compute the log prob by using z to index into a list of means and covariance matrixes. this gives us m_k and cov_k we can then compute log N(x|mu_k, cov_k).
+    Briefly  describe  how  the  VAE  was  implemented,  and  how  parameters  were estimated
+
+        vae implementation 
+            describe how each linear layer in encoder was changed to a convolutional layer with stride 2 and padding 1 and halving of feature maps, and each linear layer in decoder was changed to a transposed convolutional layer also with stride 2 and halving of feature maps
+
+            describe the reparameterization trick
+
+            describe the choice of likelihood function == multivariate bernoulli == assuming mnist images are binary
+
+            define that the latent space is 2-d
+
+            perhaps shown the model definition in the report
+
+        parameter estimation
+            maximizing the elbo which is a lower bound on log likelihood of data
+                show general formula
+                explain specific formula for the given vae
+                    i.e. the approximation of the expected log likelihood using binary cross entropy and the closed form solution for the kl divergence under the assumpting that the posterior is gaussian and prior is gaussian
+            explain that we use gradient descent to optimize the elbo, in particular the Adam algorithm with a learning rate of 0.001 and batch size 128
+            also explain that we are training for 25 epochs
+            make it apparent that the basic vae is trained using the exactly same setup as the cvae so that they can be fairly compared
+
+    Describe the performance of the model compared to the original.  You can dothis visually, based on the quality of generated images, but try to also comeup with a way to do this quantitatively.
+
+            quantitative comparison 
+                remember to explain that test set statistics are averaged across the dataset examples (log likelihood elbo and mse)
+
+                explain how mse is computed for each model 
+
+
+            analyze the quantitative results:
+                both mse and elbo is lower for vae, though the difference is not that great
+                so this indicates that the vae has learned the dataset distribution to a better degree than the cvae
+
+            explain the qualitative measures/experiments
+                clustering
+                interpolation
+                reconstruction/mean parameter images
+
+            analyze the qualitative results
+                ref to images and extropolate
+                    clustering:
+                        both models seem to have been able to separate the different classes in latent space
+                    interpolation:
+                        seems to indicate that the vae model is better at separating the classes, i.e. it has learned a better representation
+                            we see that the interpolation for cvae seems to be less well defined, different digit shapes blend together, and do not have
+                            the same kind of well defined regions as with the vae
+                            or we could say that based on the interpolation the cvae only is able to generate a subset of digits, which are heavily 0,1 9 and perhaps 4
+                    
+                    reconstruction results:
+                        also indicates that the vae model is superior as its mean parameter images and corresponding images are somewhat more defined than those of the cvae
+                            in particular the 2
+                    
+
+A.2    Alternative models
+
+
+
+    Argue for your choice of models and describe essential properties and advan-tages/disadvantages of these models (e.g.  tractability of likelihood)
+        use notes below but also give a short definition of the model
+
+    For each model, assess whether the model is better or worse than the original VAE (preferrably both by visual inspection and by quantifying the goodnessof fit).
+        ppca
+            quantitative comparison 
+                explain how the log likelihood is computed -- show formula from bishop book
+                explain how the mse is computed
             
-                we can either use torch.distributions.multivariatenormal.logprob or we can compute the log prob ourselves using the formula that was also used to compute the log prob for
-                the ppca model (the formulas given on 574 of bishop book; the easiest is probably formula 12.44)
+            analyze the quantative results
+                both log likelihood and mse are extremely low compared to vae model, this indicates that the model has not really learned much useful about the dataset at all
+
+            
+            qualitative experiments
+                clustering
+                    explain how we map from x to z
+                interpolation
+                    explain how we map from x to mean set images
+                reconstruction
+                    explain how we sample reconstructions based on mean images
+
+            analyze qualitative results
+                clustering
+                    seems to be more or less of a mess, were most points from diffent classes overlap, though the model does seem to separate 0s and 1s from the rest of the other types of digits, i.e. it has learned to distinguish these, or it has learned a proper representation of these
+                interpolation
+                    does not seem to cover many digits, but rather goes from somewhat of a mix of 0 and 2 to what looks like 9s and 1s, but these also seem to be not very distinct. in general these results corroborate the clustering and qualitative results
+                reconstructions
+                    the mean set images are not very distinct and it only seems like it has learned something somewhat useful about 0s and 1s, which is also what the other experiments indicate. in particular it cant really distinguish a 2 from a 0 and it cant really distinguish 7 and 4 from 9.
+
+
+
+
+
+elbo
+    The ELBO is defined as the expectation of the log-likelihood of the data under the approximate posterior, minus the KL divergence between the approximate posterior and the true posterior.
+
+    The ELBO is a lower bound on the true log-likelihood of the data, hence the name "Evidence Lower Bound." The closer the approximate posterior is to the true posterior, the tighter the ELBO will be as an approximation of the log-likelihood. 
+
+    The ELBO provides a lower bound on the true log likelihood because the KL divergence term is always non-negative. By maximizing the ELBO during training, we are effectively maximizing a lower bound on the true log likelihood of the observed data.
+
+    The second term in the ELBO, KL(q(z|x) || p(z|x)), is the KL divergence between the approximate posterior and the true posterior, which acts as a regularization term that prevents the approximate posterior from being too different from the true posterior.
+
+
+vae
+    intractability of likelihood
+
+        The likelihood in a Variational Autoencoder (VAE) model is typically intractable, meaning it cannot be computed directly. 
+
+        In VAE, the likelihood is intractable because it is based on a complex non-linear generative model that uses neural networks. The likelihood in VAE is the probability of the observed data given the model parameters. It is intractable, since it involves integrating out the latent variables.
+
+        the likelihood for the vae is intractable for the same reason as for GMM, i.e. that we cannot easily derive a closed form expression for the parameters of the likelihood that maximize it. However, if we know the parameters of the likelihood function, then we can determine the likelihood of the data. 
     
-            we could also use torch.distributions.MixtureSameFamily.log_prob to compute the log prob
-    because of this there does not exists a closed form solution for estimating the parameters for the maximum likelihood given a dataset
-        so we have to use EM or use stochastic variational inference
+    approximation
+
+        However, an approximate likelihood can be obtained using the technique of variational inference. This involves introducing a set of latent variables, called the latent code, and introducing an auxiliary distribution, called the approximate posterior, which is used to approximate the true posterior distribution of the latent variables given the observed data. 
+
+        Instead of computing the likelihood directly, VAE uses an approximation called the Evidence Lower BOund (ELBO) which is then optimized during the training process.
+        
+        The VAE model then uses the techniques of optimization and gradient descent to find the best values of the parameters of the approximate posterior, which will maximize the likelihood of the observed data.
+    elbo
+
+        In VAE, the reconstruction term in the ELBO loss is also a measure of how well the model is able to reconstruct the observed data, and it is also based on the assumption that the observed data is generated by a non-linear process with additive Gaussian noise. However, the reconstruction term in the ELBO loss is an approximation of the true log likelihood, and it is calculated using the approximate posterior of the latent variables.
+
+        So in summary, the reconstruction term in the ELBO loss is a measure of how well the VAE is able to reconstruct the data, but it is not the same as the likelihood, which is intractable.
+
+        In VAEs, the KL divergence term in the loss function acts as a regularization term. It helps to keep the latent variables from collapsing to a single point, which would make the model over-confident in its predictions. The KL divergence term encourages the latent variables to explore different regions of the latent space, which in turn helps to improve the diversity of the generated samples. By minimizing the negative KL divergence term, we are actually maximizing the KL divergence between the approximate posterior and the prior. This leads to a more expressive and diverse latent space.
+
+
+        The log likelihood term is the reconstruction loss which is the likelihood of the data given the latent variables. By maximizing the likelihood, we are trying to make the model produce realistic samples. Since the ELBO is the sum of the likelihood and the KL divergence, by minimizing it we are trying to balance the tradeoff between reconstruction accuracy and regularization.
+
+
+    pixel independence 
+        It depends on the structure of the VAE and the data you are working with. In general, assuming independence among the pixels when computing the likelihood of an image can simplify the calculation but may not be an accurate reflection of the true dependence structure in the data.
+
+
+    the shape of the likelihood function
+        by using a multivariate indepdnent bernoulli as likelihood, we are assuming that mnist data is black and white
+        it would be more accurate to use a family of independent gaussian distributions, where std of each is 1 and the mean is determined by the decoder output. however, in this case it would be a little more complex to compute the log prob of the dataset (i.e. we would need to use torch.distributions.normal(decoder_output, std = 1).logprob(input_x)).
+
+        however, the elbo as we compute it is a lower bound on the actual log likelihood of the data, but a more lower bound than if it were computed using the correct formula for the likelihood of our data given current parameters (i.e. for example using a gaussian as described above and computing its log likelihood)
+
+        more info
+
+            This https://www.reddit.com/r/MachineLearning/comments/4ujr2s/comment/d5qj3m9/?utm_source=share&utm_medium=web2x suggests that binary cross entropy is used in VAE case mainly for better optimization behavior. Another reason it works well is that MNIST dataset roughly follows multivariate Bernoulli distribution - the pixel values are close to either zero or one and binarization does not change it much. For more in-depth explanation of this, see https://ruishu.io/2018/03/19/bernoulli-vae/ on real-valued observations.
+
+            Note that this is exactly the application of Bernoulli observation VAEs to real-valued samples. So long as the real-valued samples can be interpreted as the Bernoulli distribution parameters, then this lower bound is valid. However, as noted above, this lower bound tends to be looser.
+
+
+            If you have bounds on the range of values you expect, you can also normalize between 0-1, sigmoid the outputs and use binary crossentropy (you will have "targets" of 0.2, 0.8, 0.1, etc). This is related to the "Dark Knowledge" approximation work from Hinton et. al., but I think people used this trick before that for bernoulli-bernoulli RBMs on color image patches as well.
+ 
+ 
+VAE vs CVAE
+
+    explanation of underperformance of CVAE 
+        it's possible that the convolutional VAE architecture you've implemented is not powerful enough to fully capture the features of the data.
+
+        The convolutional layers in the CVAE might not be able to extract useful features from the input images, as the images in the dataset may be too simple and don't require convolutional layers to extract features.
+            it's possible that the convolutional layers are not capturing the spatial information of the images in a useful way. Since the MNIST digits are centered and of similar size, the convolutional layers might not be necessary.
+        
+        or the architecture might not be deep enough to effectively learn a useful latent representation of the data.
+
+        Additionally, convolutional layers can add additional complexity to the model, making it harder to train
+
+        the size of the convolutional kernels is too small, using kernel of size (3,3) and stride 2 will reduce the image size too much before reaching the fully connected layers which results in loss of information.
+
+        The number of feature maps used in the convolutional layers are low, increasing the number of feature maps can help the model learn more complex features in the input images.
+
+
+ppca
+
+
+    overview 
+
+        Probabilistic Principal Component Analysis (PPCA) is a probabilistic version of Principal Component Analysis (PCA), which is a linear dimensionality reduction technique. PPCA is a generative model that can be used to obtain a lower-dimensional representation of data by assuming that it was generated by a linear process, with additive Gaussian noise.
+
+        This is quite nice! For all the principal components that we have included, the model correctly captures the variance of the data. For those directions that we leave out, it uses the average variance of the left-out principal components.
+
+        Probabilistic PCA provides an intermediate between these extremes - allowing you to include the most important covariances while summarizing the remaining variances with an average.
+
+        Probabilistic PCA is a simple continuous latent variable model that brings PCA functionality into the rich framework of probabilistic modelling
+
+        Due to the particular choice of output variance, there is a closed-form maximum likelihood solution to the W,μ,σ parameters. We can also use EM, which can be more efficient in higher dimensions.
+
+        For both models, we should remember that the maximum likelihood only determines the latent space up to an arbitrary rotation.
+
+    tractability
+
+        Yes, that is correct. The likelihood in PPCA is more tractable than in VAE. In PPCA, the likelihood is based on a linear generative model with Gaussian noise, which makes it relatively simple to compute. The likelihood is a Gaussian distribution, and it's parameters (mean and covariance matrix) can be estimated using Expectation-Maximization algorithm.
+
+    log likelihood values 
+            the log likelihood values are so small because the model is very complex and it is trying to fit a lot of parameters to the data. The high dimensionality of the data and the model make it difficult for the model to fit the data well. 
+
+            in general, the log likelihood can take on small negative values even when the model is fitting the data well. This is because the likelihood function for high-dimensional data is often very small, and taking the logarithm of a small number results in a large negative value. So, It is not unusual to get small negative log-likelihood values
+
+            The value of sigma^2 you provided is quite high. In general, a high value of sigma^2 indicates that the model has a high variance and is overfitting to the data. This could explain why the log likelihood values are so low.
+
+            the real part of M is a large value, which indicates that the covariance matrix of the data is also large. This in turn means that the variance of the data is large, and the data is spread out widely.
+
+            The small log likelihood values you're seeing are likely due to the high dimensionality of the data and the limited number of principal components you're using. In high-dimensional spaces, it's common for likelihood values to be very small. Additionally, the high dimensionality of the data can make it difficult for PPCA to separate the different classes, which may be why the plot of the expected value of z given x doesn't appear to clearly separate the 10 digits.
+
+            There are a other other few reasons why this might be the case:
+
+            The PPCA model assumes that the data is generated by a linear process, with additive Gaussian noise. However, the structure of the MNIST data is likely more complex than this.
+            The PPCA model assumes that the data lies on a low-dimensional linear subspace. However, the MNIST data may not lie on a low-dimensional subspace.
+            The PPCA model assumes that the number of principal components used to model the dependencies between the pixels is enough to capture the underlying structure of the data. However, using 2 principal components may not be enough to capture the underlying structure of the data.
+    
+
+    reconstruction loss 
+
+        In PPCA, the projection from the input space to the latent space is done using a linear projection, so it is deterministic and there is no sampling involved. Therefore, when computing reconstruction loss, you would use the mean of the distribution over z, which is given by the linear projection of x onto the principal subspace defined by the eigenvectors of the covariance matrix.
+
+ppca vs vae
+
+    general 
+    
+        Both PPCA and VAE are generative models that can be used to learn a compact representation of the data and to sample new data points from the learned model. However, VAE is a more powerful generative model than PPCA as it uses neural networks to model the complex non-linear relationships in the data.
+
+    tractability of likelihood
+
+        So, in essence, both PPCA and VAE use a reconstruction term(log-likelihood) to measure how well the model is able to reconstruct the data, but the log-likelihood in PPCA is exact while the reconstruction term in VAE is an approximation.
+
+    comparison to pca and autoencoder
+
+        You are correct that PPCA and VAE are probabilistic versions of PCA and Autoencoder, respectively.
+
+        PPCA is similar to PCA in that it uses a linear projection to reduce the dimensionality of the data. However, PPCA models the data as a probabilistic process, where the data is generated by a linear combination of a small number of latent variables and Gaussian noise.
+
+        VAE, on the other hand, is similar to Autoencoder in that it uses a non-linear neural network to learn a compressed representation of the data. However, VAE models the data as a probabilistic process, where the data is generated by a latent variable z and a decoder network.
+
+    
+gaussian mixture model
+
+    overview 
+
+        Mixture models allow modelling of complex distributions.
+        The latent variable provides structure/groups in the data
+        Gaussian mixtures are somewhat similar to Kmeans, but estimating (co)variances in addition to means.
+        Mixture models can be trained using gradient descent, but the EM algorithm is often more efficient.
+
+    tractability of likelihood
+
+        there exists a closed form solution for the likelihood given known parameters but it is a complex sum over log likelihood for each given latent variable z
+            for each datapoint we sum its log prob given a specific z : logL(X | theta) = sum_{i=1}^{n} log( sum_{j=1}^{k} pi_j * N(x_i | mu_j, Sigma_j) )
+                
+                Where pi_j, mu_j and Sigma_j are the weight, mean, and covariance matrix of the j-th component and N(x_i | mu_j, Sigma_j) is the probability density function of a multivariate normal distribution with mean mu_j and covariance matrix Sigma_j evaluated at x_i.
+
+                we can compute the log prob by using z to index into a list of means and covariance matrixes. this gives us m_k and cov_k we can then compute log N(x|mu_k, cov_k).
+                
+                    we can either use torch.distributions.multivariatenormal.logprob or we can compute the log prob ourselves using the formula that was also used to compute the log prob for
+                    the ppca model (the formula 12.43 given on 574 of bishop book)
+        
+                we could also use torch.distributions.MixtureSameFamily.log_prob to compute the log prob
+        because of this there does not exists a closed form solution for estimating the parameters for the maximum likelihood given a dataset, e.g. the likelihood is intractable
+            so we have to use EM or use stochastic variational inference
+
+gmm vs ppca
+
+    Advantages of Gaussian mixture models (GMMs) include:
+        Multimodality: GMMs can model data with multiple modes, or clusters, which makes them particularly useful for datasets with distinct groups of points. This is especially useful in applications such as image segmentation, where the goal is to separate different regions of an image into distinct clusters.
+
+        Sensitivity to initialization: GMMs can be sensitive to the initial values of the parameters, and different initializations can lead to different local optima. This can make it difficult to know whether the algorithm has converged to a good solution.
+
+    Some advantages of PPCA include:
+
+        Dimensionality Reduction: PPCA is a dimensionality reduction technique that can be used to reduce the number of features in the data. It maps the original high-dimensional data to a lower-dimensional space, which can make the data easier to visualize and analyze.
+
+    
+    However, PPCA also has some disadvantages:
+
+        Linear assumption: PPCA assumes that the data is generated by a linear process, which may not be a good model for some datasets. This means that PPCA may not be able to accurately model complex, non-linear structure in the data.
+
+    Advantages of GMM over PPCA:
+
+        GMM is more flexible and can model a wide range of distributions, including non-Gaussian distributions.
+        GMM can model data with multiple modes, which makes it particularly useful for datasets with distinct groups of points.
+        
+    Advantages of PPCA over GMM:
+
+        PPCA is a dimensionality reduction technique, which makes it useful for tasks where the goal is to reduce the number of features in the data.
 
 
 todo
@@ -33,151 +298,14 @@ todo
 
 
 
-elbo
-    The ELBO is defined as the expectation of the log-likelihood of the data under the approximate posterior, minus the KL divergence between the approximate posterior and the true posterior.
-
-    The ELBO is a lower bound on the true log-likelihood of the data, hence the name "Evidence Lower Bound." The closer the approximate posterior is to the true posterior, the tighter the ELBO will be as an approximation of the log-likelihood. 
-
-    In VAE, the reconstruction term in the ELBO loss is also a measure of how well the model is able to reconstruct the observed data, and it is also based on the assumption that the observed data is generated by a non-linear process with additive Gaussian noise. However, the reconstruction term in the ELBO loss is an approximation of the true log likelihood, and it is calculated using the approximate posterior of the latent variables.
-
-    
-    So in summary, the reconstruction term in the ELBO loss is a measure of how well the VAE is able to reconstruct the data, but it is not the same as the likelihood, which is intractable.
-
-    The second term in the ELBO, KL(q(z|x) || p(z|x)), is the KL divergence between the approximate posterior and the true posterior, which acts as a regularization term that prevents the approximate posterior from being too different from the true posterior.
-
-    If you want to compare a Probabilistic Principal Component Analysis (PPCA) model and a Variational Autoencoder (VAE), you would typically compare the log-likelihood of the PPCA model with the Evidence Lower Bound (ELBO) of the VAE.
-
-    The ELBO provides a lower bound on the true log likelihood because the KL divergence term is always non-negative. By maximizing the ELBO during training, we are effectively maximizing a lower bound on the true log likelihood of the observed data.
-
-
-vae
-    The likelihood in a Variational Autoencoder (VAE) model is typically intractable, meaning it cannot be computed directly. However, an approximate likelihood can be obtained using the technique of variational inference
-
-    QUESTION : can we assume that pixels are independent?
-        It depends on the structure of the VAE and the data you are working with. In general, assuming independence among the pixels when computing the likelihood of an image can simplify the calculation but may not be an accurate reflection of the true dependence structure in the data.
-
-    QUESTION:
-        is the likelihood intractable or just finding the parameters that maximize the likelihood intractable?
-
-            ANSWER: the likelihood for the vae is intractable for the same reason as for GMM, i.e. that we cannot easily derive a closed form expression for the parameters of the likelihood that maximize it. However, if we know the parameters of the likelihood function, then we can determine the likelihood of the data. 
-
-            ANOTHER POINT: 
-                the likelihood function we are using is from the family of independent (one for each pixel) multivariate bernoulli distributions
-                    hence we are assuming that mnist data is black and white, which is not actually the case (another simplification)
-                it would be more accurate to use a family of independent gaussian distributions, where std of each is 1 and the mean is determined by the decoder output
-                    however, in this case it would be a little more complex to compute the log prob of the dataset (i.e. we would need to use torch.distributions.normal(decoder_output, std = 1).logprob(input_x)).
-
-            FURTHER NOTE:
-                This https://www.reddit.com/r/MachineLearning/comments/4ujr2s/comment/d5qj3m9/?utm_source=share&utm_medium=web2x suggests that binary cross entropy is used in VAE case mainly for better optimization behavior. Another reason it works well is that MNIST dataset roughly follows multivariate Bernoulli distribution - the pixel values are close to either zero or one and binarization does not change it much. For more in-depth explanation of this, see https://ruishu.io/2018/03/19/bernoulli-vae/ on real-valued observations.
-
-                Note that this is exactly the application of Bernoulli observation VAEs to real-valued samples. So long as the real-valued samples can be interpreted as the Bernoulli distribution parameters, then this lower bound is valid. However, as noted above, this lower bound tends to be looser.
-
-
-                If you have bounds on the range of values you expect, you can also normalize between 0-1, sigmoid the outputs and use binary crossentropy (you will have "targets" of 0.2, 0.8, 0.1, etc). This is related to the "Dark Knowledge" approximation work from Hinton et. al., but I think people used this trick before that for bernoulli-bernoulli RBMs on color image patches as well.
-
-            CONCLUSION
-                the elbo as we compute it is a lower bound on the actual log likelihood of the data, but a more lower bound than if it were computed using the correct formula for the likelihood of our data given current parameters (i.e. for example using a gaussian as described above and computing its log likelihood)
-
-
-
-
-        ANSWER: 
-            The reason for this is that a Bernoulli likelihood function is a simpler model, as it only has two possible values for each pixel (black or white), whereas a Gaussian likelihood function has a continuous range of possible values.
-
-            Additionally, the Bernoulli likelihood function is useful when the goal is to learn a binary representation of the data, where each pixel is either black or white. This can be useful in certain applications such as denoising, where the goal is to remove noise from the images while preserving the underlying structure.
-
-            Another reason why Bernoulli likelihood is used is that the VAE can use a Bernoulli likelihood even though the data is continuous, this is because the VAE's training process is based on optimization of an approximate likelihood, the ELBO, rather than the true likelihood. And with this approximation, it is possible that the VAE can still perform well even with a Bernoulli likelihood function.
-
-            It is worth noting that while using a Bernoulli likelihood function is simpler, it may not be the best choice for all applications and the Gaussian likelihood function is more appropriate for the continuous range of pixel intensity values in the MNIST images.
-
-    In VAE, the likelihood is intractable because it is based on a complex non-linear generative model that uses neural networks. 
-
-    The likelihood in VAE is the probability of the observed data given the model parameters. It is intractable, since it involves integrating out the latent variables.
-
-
-
-    However, an approximate likelihood can be obtained using the technique of variational inference. This involves introducing a set of latent variables, called the latent code, and introducing an auxiliary distribution, called the approximate posterior, which is used to approximate the true posterior distribution of the latent variables given the observed data. 
-    
-    Instead of computing the likelihood directly, VAE uses an approximation called the Evidence Lower BOund (ELBO) which is then optimized during the training process.
-    
-    The VAE model then uses the techniques of optimization and gradient descent to find the best values of the parameters of the approximate posterior, which will maximize the likelihood of the observed data.
-
-    In VAEs, the KL divergence term in the loss function acts as a regularization term. It helps to keep the latent variables from collapsing to a single point, which would make the model over-confident in its predictions. The KL divergence term encourages the latent variables to explore different regions of the latent space, which in turn helps to improve the diversity of the generated samples. By minimizing the negative KL divergence term, we are actually maximizing the KL divergence between the approximate posterior and the prior. This leads to a more expressive and diverse latent space.
-    The log likelihood term is the reconstruction loss which is the likelihood of the data given the latent variables. By maximizing the likelihood, we are trying to make the model produce realistic samples. Since the ELBO is the sum of the likelihood and the KL divergence, by minimizing it we are trying to balance the tradeoff between reconstruction accuracy and regularization.
-
-ppca
-    Probabilistic Principal Component Analysis (PPCA) is a probabilistic version of Principal Component Analysis (PCA), which is a linear dimensionality reduction technique. PPCA is a generative model that can be used to obtain a lower-dimensional representation of data by assuming that it was generated by a linear process, with additive Gaussian noise.
-
-
-    Yes, that is correct. The likelihood in PPCA is more tractable than in VAE. In PPCA, the likelihood is based on a linear generative model with Gaussian noise, which makes it relatively simple to compute. The likelihood is a Gaussian distribution, and it's parameters (mean and covariance matrix) can be estimated using Expectation-Maximization algorithm.
-
-    The log-likelihood value you're getting is extremely low, which suggests that the PPCA model is not a good fit for the MNIST data. There are a few reasons why this might be the case:
-
-        The PPCA model assumes that the data is generated by a linear process, with additive Gaussian noise. However, the structure of the MNIST data is likely more complex than this.
-        The PPCA model assumes that the noise is independent and identically distributed across the pixels. However, in the MNIST data, the noise across the pixels may not be independent, or the noise distribution may not be Gaussian.
-        The PPCA model assumes that the data lies on a low-dimensional linear subspace. However, the MNIST data may not lie on a low-dimensional subspace.
-        The PPCA model assumes that the number of principal components used to model the dependencies between the pixels is enough to capture the underlying structure of the data. However, using 2 principal components may not be enough to capture the underlying structure of the data.
-    
-    the log likelihood values are so small because the model is very complex and it is trying to fit a lot of parameters to the data. The high dimensionality of the data and the model make it difficult for the model to fit the data well. 
-
-    in general, the log likelihood can take on small negative values even when the model is fitting the data well. This is because the likelihood function for high-dimensional data is often very small, and taking the logarithm of a small number results in a large negative value. So, It is not unusual to get small negative log-likelihood values
-
-    The value of sigma^2 you provided is quite high. In general, a high value of sigma^2 indicates that the model has a high variance and is overfitting to the data. This could explain why the log likelihood values are so low.
-
-    One way to check this is by looking at the eigenvalues of the data covariance matrix. If the eigenvalues are much larger than sigma^2, it suggests that the model is overfitting.
-
-    he real part of M is a large value, which indicates that the covariance matrix of the data is also large. This in turn means that the variance of the data is large, and the data is spread out widely.
-
-    The small log likelihood values you're seeing are likely due to the high dimensionality of the data and the limited number of principal components you're using. In high-dimensional spaces, it's common for likelihood values to be very small. Additionally, the high dimensionality of the data can make it difficult for PPCA to separate the different classes, which may be why the plot of the expected value of z given x doesn't appear to clearly separate the 10 digits.
-
-    In PPCA, the projection from the input space to the latent space is done using a linear projection, so it is deterministic and there is no sampling involved. Therefore, when computing reconstruction loss, you would use the mean of the distribution over z, which is given by the linear projection of x onto the principal subspace defined by the eigenvectors of the covariance matrix.
-
-ppca vs vae
-    VAE, on the other hand, is a deep generative model that uses neural networks to learn non-linear representations of the data. Unlike PPCA, VAE is an unsupervised method that learns the underlying structure of the data by training on the data itself, rather than on labeled examples.
-
-    Both PPCA and VAE can be used for dimensionality reduction, but VAE is a more general model that can handle complex data distributions and can be extended to other tasks such as image generation, anomaly detection, and representation learning. Additionally, VAE can also be used to generate new samples that are similar to the training data.
-
-    So, in essence, both PPCA and VAE use a reconstruction term(log-likelihood) to measure how well the model is able to reconstruct the data, but the log-likelihood in PPCA is exact while the reconstruction term in VAE is an approximation.
-
-    You are correct that PPCA and VAE are probabilistic versions of PCA and Autoencoder, respectively.
-
-    PPCA is similar to PCA in that it uses a linear projection to reduce the dimensionality of the data. However, PPCA models the data as a probabilistic process, where the data is generated by a linear combination of a small number of latent variables and Gaussian noise.
-
-    VAE, on the other hand, is similar to Autoencoder in that it uses a non-linear neural network to learn a compressed representation of the data. However, VAE models the data as a probabilistic process, where the data is generated by a latent variable z and a decoder network.
-
-    Both PPCA and VAE are generative models that can be used to learn a compact representation of the data and to sample new data points from the learned model. However, VAE is a more powerful generative model than PPCA as it uses neural networks to model the complex non-linear relationships in the data.
-
-
 MCMC
     This can be done by updating the kernel hyperparameters and the training data of the GP model using the posterior samples obtained from the previous iteration. You can use the mean or mode of the posterior samples as the new hyperparameters and training data.
+   
 
 
-VAE vs CVAE
-
-     One way to improve the performance of your CVAE is to try different architectures (such as deeper or wider networks)
-
-     it's possible that the convolutional VAE architecture you've implemented is not powerful enough to fully capture the features of the data.
 
 
-     Some things you can try to improve the performance of the CVAE include:
-
-        Increasing the number of filters in the convolutional layers to capture more complex features in the data
-        Using deeper architectures with more layers
-        Using data augmentation techniques like rotation, flipping or cropping
-        Using dropout to prevent overfitting
-    
-    The architecture of the CVAE might not be well-suited for the task at hand. The convolutional layers in the CVAE might not be able to extract useful features from the input images, or the architecture might not be deep enough to effectively learn a useful latent representation of the data.
-
-    The convolutional layers in the CVAE may not be able to extract useful features from the data, as the images in the dataset may be too simple and don't require convolutional layers to extract features.
-
-    Additionally, convolutional layers can add additional complexity to the model, making it harder to train
-
-    The second thing is that, the size of the convolutional kernels is too small, using kernel of size (3,3) and stride 2 will reduce the image size too much before reaching the fully connected layers which results in loss of information.
-
-    The third thing is that, The number of feature maps used in the convolutional layers are low, increasing the number of feature maps can help the model learn more complex features in the input images.
 
 
-    it is possible that the regular VAE is performing better on the MNIST dataset because it is a relatively simple dataset and the added complexity of the convolutional layers is not providing enough additional information to improve the ELBO over the simpler model. Also, it's possible that the convolutional layers are not capturing the spatial information of the images in a useful way. Since the MNIST digits are centered and of similar size, the convolutional layers might not be necessary. It's also possible that the added complexity of the convolutional layers is making it harder to find good parameters and regularization settings. 
 
 
-gmm vs ppca
