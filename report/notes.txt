@@ -282,13 +282,6 @@ gmm vs ppca
 todo
     check whether we should use  sigma^-2 * M or sigma^2 * inverse(M) for p(z|x) in ppca model 
     check why algorithm 1 in b.2 is returning the same minima each iteration
-    compute log prob for gmm using manual method
-    compute the mse for gmm
-        for given x sample x from p(z|x), z defines a mean vector, which we reshape as image and compare with input x using mse
-
-        QUESTION: how to sample from p(z|x), i.e. how is p(z|x) even defined
-    
-    For this, you can use convolutional layers followed by max-pooling layers to reduce the spatial resolution of the image and increase the number of feature maps.
 
     check why we cant use product of univariate normals for likelihood in ppca
 
