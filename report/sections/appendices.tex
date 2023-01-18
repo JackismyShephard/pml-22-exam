@@ -1,0 +1,29 @@
+\section{Extra figures}
+\begin{figure}[!h]
+	\begin{subfigure}[t]{1\textwidth}
+		\centering
+		\includegraphics[width = 0.8\textwidth]{figures/ppca/real}
+		\caption{Test set images}
+		\label{fig:ppca:real2}
+	\end{subfigure}
+	\begin{subfigure}[t]{1\textwidth}
+		\centering
+		\includegraphics[width = 0.8\textwidth]{figures/vae/sample}
+		\caption{VAE}
+		\label{fig:vae:recon}
+	\end{subfigure}
+	\begin{subfigure}[t]{1\textwidth}
+		\centering
+		\includegraphics[width = 0.8\textwidth]{figures/cvae/sample}
+		\caption{CVAE}
+		\label{fig:cvae:recon}
+	\end{subfigure}
+	\begin{subfigure}[t]{1\textwidth}
+		\centering
+		\includegraphics[width = 0.8\textwidth]{figures/ppca/sample}
+		\caption{PPCA}
+		\label{fig:ppca:recon}
+	\end{subfigure}
+	\caption{Comparison of MNIST test set images and corresponding reconstructions sampled from density models}
+	\label{fig:mean:_v_real}
+\end{figure}
