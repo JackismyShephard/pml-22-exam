@@ -59,8 +59,10 @@
 \end{figure}
 
 \begin{figure}[!h]
+	\begin{floatrow}
 	\captionsetup{width=.49\linewidth}
-	\begin{subfigure}[t]{0.49\textwidth}
+	\ffigbox{%
+	\begin{subfigure}[t]{0.45\textwidth}
 		\begin{subfigure}[t]{0.49\textwidth}
 			\centering
 			\includegraphics[width = 1\textwidth]{figures/vae/interpolation}
@@ -85,15 +87,12 @@
 			\caption{GMM}
 			\label{fig:gmm:interpolation}
 		\end{subfigure}	
-		
-
 	\end{subfigure}
+	}{%
 	\caption{Interpolating images from latent space variables using trained density models.}
-\end{figure}
-
-\begin{figure}[!h]
-	\captionsetup{width=.49\linewidth}
-	\begin{subfigure}[t]{0.49\textwidth}
+	}
+	\ffigbox{%
+\begin{subfigure}[t]{0.45\textwidth}
 		\begin{subfigure}[t]{0.49\textwidth}
 			\centering
 			\includegraphics[width = 1\textwidth]{figures/vae/clustering}
@@ -119,8 +118,10 @@
 			\label{fig:gmm:clustering}
 		\end{subfigure}
 	\end{subfigure}
-
-	\caption{Clustering on MNIST test (projection to latent space) using trained density models.}	
+	}{%
+	\caption{Clustering on MNIST test (projection to latent space) using trained density models.}
+	}
+\end{floatrow}
 \end{figure}
 
 %\input{metrics.tex}
