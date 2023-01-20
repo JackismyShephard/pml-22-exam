@@ -11,6 +11,6 @@ To compare this model with the previous three we use the same quantitative measu
 
 As the implementation of the gaussian mixture model in \texttt{scikit-learn} does not provide a method to sample the obtained distribution we cannot perform the same interpolation as with the other model. Instead, we use a multivariate normal distribution, with the mean and covariance to sample for each cluster. The mean for each cluster and the result of sampling, based on each cluster, is displayed in \cref{fig:gmm:clustering}.  
 
-From these it can be seen that the method appears to have found a suitable cluster for the digits $6$, $3$, $1$ and $2$. The remaining clusters does not appear unique with the digit $9$ belonging to three clusters. When sampling around each cluster, about half (cluster 2,4,8,9,10) becomes unrecognizable, while the remaining mainly keep their form but still contains a lot of noise.  
+From these it can be seen that the method appears to have found a suitable cluster for the digits $2$, $1$, $3$ and $6$. The remaining clusters does not appear unique with the digit $9$ belonging to three clusters. When sampling around each cluster most becomes unrecognizable, while the remaining mainly keep their form but still contains a lot of noise.  
 
 Based on the quantitative and qualitative measures it can be concluded that a gaussian mixture model is not good alternative to a variational autoencoder. 
