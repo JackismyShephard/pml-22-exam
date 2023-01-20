@@ -34,30 +34,33 @@
 \end{figure}
 
 \begin{figure}[!h]
-	\begin{subfigure}[t]{0.49\textwidth}
-		\centering
-		\includegraphics[width = 1\textwidth]{figures/vae/interpolation}
-		\caption{VAE}
-		\label{fig:vae:interpolation}
+	\begin{subfigure}[t]{0.60\textwidth}
+		\begin{subfigure}[t]{0.49\textwidth}
+			\centering
+			\includegraphics[width = 1\textwidth]{figures/vae/interpolation}
+			\caption{VAE}
+			\label{fig:vae:interpolation}
+		\end{subfigure}
+		\begin{subfigure}[t]{0.49\textwidth}
+			\centering
+			\includegraphics[width = 1\textwidth]{figures/cvae/interpolation}
+			\caption{CVAE}
+			\label{fig:cvae:interpolation}
+		\end{subfigure}
+		\begin{subfigure}[t]{0.49\textwidth}
+			\centering
+			\includegraphics[width = 1\textwidth]{figures/ppca/interpolation}
+			\caption{PPCA}
+			\label{fig:ppca:interpolation}
+		\end{subfigure}
+		\begin{subfigure}[t]{0.49\textwidth}
+			\centering
+			\includegraphics[width = 1\textwidth]{figures/gmm/interpolation}
+			\caption{GMM}
+			\label{fig:gmm:interpolation}
+		\end{subfigure}	
 	\end{subfigure}
-	\begin{subfigure}[t]{0.49\textwidth}
-		\centering
-		\includegraphics[width = 1\textwidth]{figures/cvae/interpolation}
-		\caption{CVAE}
-		\label{fig:cvae:interpolation}
-	\end{subfigure}
-	\begin{subfigure}[t]{0.49\textwidth}
-		\centering
-		\includegraphics[width = 1\textwidth]{figures/ppca/interpolation}
-		\caption{PPCA}
-		\label{fig:ppca:interpolation}
-	\end{subfigure}
-	\begin{subfigure}[t]{0.49\textwidth}
-		\centering
-		\includegraphics[width = 1\textwidth]{figures/gmm/interpolation}
-		\caption{GMM}
-		\label{fig:gmm:interpolation}
-	\end{subfigure}
+
 	\caption{Interpolating images from latent space variables using trained density models.}	
 \end{figure}
 
