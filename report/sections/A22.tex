@@ -1,0 +1,16 @@
+\paragraph{Essential properties and advantages/disadvantages} 
+The second method that we have chosen to implement is a gaussian mixture model as described in Chapter 9.2 of \citep{bishop2006pattern}. The main advantage of this method is that it attempts to separate the data into clusters that should represent the different classes of the dataset.  
+
+The method does however have the disadvantage that no closed form solution exists to estimate the parameters of the model and as such the EM method is used. This makes the method dependent on the initial estimates of the parameters and if chosen poorly the method might not converge.  
+
+\paragraph{Model implementation} 
+The implementation of the method follows the description in Chapter 9.2 of \citep{bishop2006pattern} but as the method requires that each $x$ is a vector, each image was flattened to a vector of size $28 * 28$. This causes a problem when using the PDF of the multivariate normal distribution as each input has an extremely small probability and resulted in a value of $0$ being returned. Instead, the implementation provided by \texttt{scikit-learn} was used to apply the method to the dataset.  
+
+\paragraph{Model performance} 
+To compare this model with the previous three we use the same quantitative measures and can be seen in \cref{table:metrics}. The mean log-likelihood was calculated by using the built-in method \texttt{score} for the test set. The value is extremely negative and suggests that the model is performing very poorly. The MSE was calculated by first obtaining the most likely cluster for each sample $x_i$ in the test set, and then using the mean value for said cluster as the value of $\hat{x}_i$. The MSE of the model is slightly more than PPCA and is still worse than both the VAE and CVAE.  
+
+As the implementation of the gaussian mixture model in \texttt{scikit-learn} does not provide a method to sample the obtained distribution we cannot perform the same interpolation as with the other model. Instead, we use a multivariate normal distribution, with the mean and covariance to sample for each cluster. The mean for each cluster and the result of sampling, based on each cluster, is displayed in \cref{fig:gmm:clustering}.  
+
+From these it can be seen that the method appears to have found a suitable cluster for the digits $6$, $3$, $1$ and $2$. The remaining clusters does not appear unique with the digit $9$ belonging to three clusters. When sampling around each cluster, about half (cluster 2,4,8,9,10) becomes unrecognizable, while the remaining mainly keep their form but still contains a lot of noise.  
+
+Based on the quantitative and qualitative measures it can be concluded that a gaussian mixture model is not good alternative to a variational autoencoder. 
