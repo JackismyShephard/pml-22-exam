@@ -1,29 +1,82 @@
+
+\section{Code repository}
+The Python code used to train the models and generate the results can be found in our repository at 
+\url{https://github.com/JackismyShephard/pml-22}
+
 \section{Extra figures}
 \begin{figure}[!h]
 	\begin{subfigure}[t]{1\textwidth}
 		\centering
 		\includegraphics[width = 0.8\textwidth]{figures/ppca/real}
 		\caption{Test set images}
-		\label{fig:ppca:real2}
 	\end{subfigure}
 	\begin{subfigure}[t]{1\textwidth}
 		\centering
-		\includegraphics[width = 0.8\textwidth]{figures/vae/sample}
+		\includegraphics[width = 0.8\textwidth]{figures/vae/mean}
 		\caption{VAE}
-		\label{fig:vae:recon}
 	\end{subfigure}
 	\begin{subfigure}[t]{1\textwidth}
 		\centering
-		\includegraphics[width = 0.8\textwidth]{figures/cvae/sample}
+		\includegraphics[width = 0.8\textwidth]{figures/cvae/mean}
 		\caption{CVAE}
-		\label{fig:cvae:recon}
 	\end{subfigure}
 	\begin{subfigure}[t]{1\textwidth}
 		\centering
-		\includegraphics[width = 0.8\textwidth]{figures/ppca/sample}
+		\includegraphics[width = 0.8\textwidth]{figures/ppca/mean}
 		\caption{PPCA}
-		\label{fig:ppca:recon}
+	\end{subfigure}
+	\begin{subfigure}[t]{1\textwidth}
+		\centering
+		\includegraphics[width = 0.8\textwidth]{figures/gmm/mean}
+		\caption{GMM}
 	\end{subfigure}
 	\caption{Comparison of MNIST test set images and corresponding reconstructions sampled from density models}
-	\label{fig:mean:_v_real}
+\end{figure}
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width = 1\textwidth]{figures/vae/clustering}
+		\caption{VAE}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width = 1\textwidth]{figures/cvae/clustering}
+		\caption{CVAE}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width = 1\textwidth]{figures/ppca/clustering}
+		\caption{PPCA}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width = 1\textwidth]{figures/gmm/clustering}
+		\caption{GMM}
+	\end{subfigure}
+	\caption{Clustering on MNIST test (projection to latent space) using trained density models.}	
+\end{figure}
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width = 1\textwidth]{figures/vae/interpolation}
+		\caption{VAE}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width = 1\textwidth]{figures/cvae/interpolation}
+		\caption{CVAE}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width = 1\textwidth]{figures/ppca/interpolation}
+		\caption{PPCA}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width = 1\textwidth]{figures/gmm/interpolation}
+		\caption{GMM}
+	\end{subfigure}
+	\caption{Interpolating images from latent space variables using trained density models}	
 \end{figure}
